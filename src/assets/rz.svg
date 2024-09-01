@@ -1,0 +1,37 @@
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+import svgwrite
+
+# Load the image
+img_path = '/mnt/data/rz.jpg'
+image = Image.open(img_path)
+
+# Convert image to grayscale
+image_gray = image.convert('L')
+
+# Convert grayscale image to binary (black and white)
+threshold = 128
+image_bw = image_gray.point(lambda x: 0 if x < threshold else 255, '1')
+
+# Get image size
+width, height = image_bw.size
+
+# Convert image to numpy array
+image_array = np.array(image_bw)
+
+# Create an SVG drawing
+dwg = svgwrite.Drawing('/mnt/data/rz.svg', profile='tiny', size=(width, height))
+
+# Loop through array and draw rectangles for black pixels
+for y in range(height):
+    for x in range(width):
+        if image_array[y, x] == 0:  # black pixel
+            dwg.add(dwg.rect(insert=(x, y), size=(1, 1), fill='black'))
+
+# Save SVG file
+dwg.save()
+
+# Output path to the SVG file
+svg_path = '/mnt/data/rz.svg'
+svg_path
